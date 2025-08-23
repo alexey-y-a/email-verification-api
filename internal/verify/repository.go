@@ -33,7 +33,7 @@ func (r *VerificationRepository) FindByHash(hash string) (*model.Verification, e
 	row := r.DB.QueryRow(query, hash)
 
 	var v model.Verification
-	err := row.Scan(&v.ID, &v.Email, &v.CreatedAt, &v.ExpiresAt, &v.Verified)
+	err := row.Scan(&v.ID, &v.Email, &v.Hash, &v.CreatedAt, &v.ExpiresAt, &v.Verified)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}

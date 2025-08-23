@@ -4,7 +4,7 @@ import "database/sql"
 
 func Migrate(db *sql.DB) error {
 	query := `
-	CREATE TABLE IF NOT EXIST verifications (
+	CREATE TABLE IF NOT EXISTS verifications (
 		id SERIAL PRIMARY KEY,
 		email TEXT NOT NULL,
 		hash TEXT UNIQUE NOT NULL,
