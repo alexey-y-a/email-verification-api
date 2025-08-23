@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"email-verification-api/db"
 	"email-verification-api/internal/model"
 
 	_ "github.com/lib/pq"
@@ -15,17 +16,21 @@ import (
 var testService *VerificationService
 
 func TestMain(m *testing.M) {
-	db, err := sql.Open("postgres", "host=localhost port=5432 user=postgres password=secret dbname=email_verification sslmode=disable")
+	dbConn, err := sql.Open("postgres", "host=localhost port=5432 user=postgres password=secret dbname=email_verification sslmode=disable")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Не удалось подключиться к БД:", err)
 	}
-	defer db.Close()
+	defer dbConn.Close()
 
-	if err := Migrate(db); err != nil {
-		log.Fatal(err)
+	if err := dbConn.Ping(); err != nil {
+		log.Fatal("Не удалось пинговать БД:", err)
 	}
 
-	testService = NewVerificationService(nil, db)
+	if err := db.Migrate(dbConn); err != nil {
+		log.Fatal("Ошибка миграции:", err)
+	}
+
+	testService = NewVerificationService(nil, dbConn)
 
 	os.Exit(m.Run())
 }

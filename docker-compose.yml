@@ -34,4 +34,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  postgres_
+  postgres_data:
