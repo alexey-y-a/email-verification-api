@@ -32,7 +32,7 @@ func (s *VerificationService) SendVerificationEmail(to, hash string) error {
 	e.From = s.Config.SMTPEmail
 	e.To = []string{to}
 	e.Subject = "Подтвердите ваш email"
-	verifyURL := fmt.Sprintf("http://localhost:%s/verify/%s", s.Config.AppPort, hash)
+	verifyURL := fmt.Sprintf("http://localhost:8081/verify/%s", hash)
 	e.HTML = []byte(fmt.Sprintf(`
 		<h1>Привет!</h1>
 		<p>Нажмите на ссылку ниже, чтобы подтвердить email:</p>
