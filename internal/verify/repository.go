@@ -53,3 +53,9 @@ func (r *VerificationRepository) MarkAsVerified(hash string) error {
 	_, err := r.DB.Exec(query, hash)
 	return err
 }
+
+func (r *VerificationRepository) DeleteByHash(hash string) error {
+	query := `DELETE FROM verifications WHERE hash = $1`
+	_, err := r.DB.Exec(query, hash)
+	return err
+}

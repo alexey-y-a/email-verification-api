@@ -66,24 +66,15 @@ func (s *VerificationService) VerifyHandler(w http.ResponseWriter, r *http.Reque
 
 	verification, err := s.Repository.FindByHash(hash)
 	if err != nil || verification == nil {
-		http.Error(w, "Ссылка недействительна или просрочена", http.StatusNotFound)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]bool{"valid": false})
 		return
 	}
 
-	if verification.Verified {
-		http.Error(w, "Email уже подтверждён", http.StatusBadRequest)
-		return
-	}
-
-	if err := s.Repository.MarkAsVerified(hash); err != nil {
-		http.Error(w, "Ошибка подтверждения", http.StatusInternalServerError)
-		return
+	if err := s.Repository.DeleteByHash(hash); err != nil {
+		log.Printf("Ошибка удаления записи: %v", err)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{
-		"status":  "verified",
-		"message": "Email успешно подтверждён!",
-		"email":   verification.Email,
-	})
+	json.NewEncoder(w).Encode(map[string]bool{"valid": true})
 }

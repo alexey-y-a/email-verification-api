@@ -40,5 +40,6 @@ func (s *VerificationService) SendVerificationEmail(to, hash string) error {
 	`, verifyURL, verifyURL))
 
 	smtpAddr := s.Config.SMTPHost + ":" + s.Config.SMTPPort
+
 	return e.Send(smtpAddr, email.PlainAuth("", s.Config.SMTPEmail, s.Config.SMTPPassword, s.Config.SMTPHost))
 }
