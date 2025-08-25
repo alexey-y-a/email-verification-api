@@ -61,27 +61,30 @@ func TestCRUDVerification(t *testing.T) {
 
 	err := testService.Repository.Create(verification)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatal("Не удалось создать запись:", err)
 	}
 
 	found, err := testService.Repository.FindByHash(hash)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatal("Ошибка при поиске:", err)
 	}
 	if found == nil {
-		t.Fatal("Запись не найдена")
+		t.Fatal("Запись не найдена после создания")
 	}
 	if found.Email != email {
-		t.Error("Email не совпадает")
+		t.Errorf("Email не совпадает: ожидается %s, получено %s", email, found.Email)
 	}
 
-	err = testService.Repository.MarkAsVerified(hash)
+	err = testService.Repository.DeleteByHash(hash)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatal("Не удалось удалить запись:", err)
 	}
 
-	found, _ = testService.Repository.FindByHash(hash)
-	if !found.Verified {
-		t.Error("Должно быть verified = true")
+	foundAfter, err := testService.Repository.FindByHash(hash)
+	if err != nil {
+		t.Fatal("Ошибка при поиске после удаления:", err)
+	}
+	if foundAfter != nil {
+		t.Fatal("Запись найдена после удаления — ожидается nil")
 	}
 }
